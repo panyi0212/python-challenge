@@ -3,13 +3,13 @@
 import csv
 import os
 import pandas as pd
-import numpy as np
+# import numpy as np
 
 # import the location of the file
-filepath=os.path.join("..","Homework","03-Python","Starter_Code","PyPoll","Resources","budget_data.csv")
+filepath=os.path.join("Resources","election_data.csv")
 
 # use pandas to read the csv file
-election_data = pd.read_csv("election_data.csv")
+election_data = pd.read_csv(filepath, encoding="ISO-8859-1")
 
 #Calc the total votes
 total_votes = len(election_data["Ballot ID"])
@@ -41,6 +41,7 @@ Count3 = Summary.loc[(Summary["Name"]==name[2]),"Counts"].item()
 max = Summary["Counts"].max()
 winner = Summary.loc[Summary["Counts"]==max,"Name"].item()
 
+# Print result
 
 print("Election Results") 
 print("-------------------------")
@@ -52,3 +53,23 @@ print(f'{name[2]}: {percentage3} ({Count3})')
 print("-------------------------")
 print(f'Winner: {winner}')
 print("-------------------------")
+
+
+# create path for writing to a csv
+
+output_path = os.path.join("Analysis", "analysis.csv")
+
+# open the csv file
+with open(output_path, 'w') as csvfile:
+
+    csvwriter = csv.writer(csvfile) 
+    csvwriter.writerow(["Election Results"])
+    csvwriter.writerow(["-------------------------"])
+    csvwriter.writerow([f'Total Votes: {total_votes}'])
+    csvwriter.writerow(["-------------------------"])
+    csvwriter.writerow([f'{name[0]}: {percentage1} ({Count1})'])
+    csvwriter.writerow([f'{name[1]}: {percentage2} ({Count2})'])
+    csvwriter.writerow([f'{name[2]}: {percentage3} ({Count3})'])
+    csvwriter.writerow(["-------------------------"])
+    csvwriter.writerow([f'Winner: {winner}'])
+    csvwriter.writerow(["-------------------------"])
