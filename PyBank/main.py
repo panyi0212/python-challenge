@@ -7,7 +7,7 @@ import numpy as np
 filepath=os.path.join("Resources","budget_data.csv")
 
 # use pandas to read the csv file
-budget_data = pd.read_csv("budget_data.csv")
+budget_data = pd.read_csv(filepath, encoding="ISO-8859-1")
 
 # Count the number of total months
 month = len(budget_data)
@@ -50,4 +50,20 @@ print(f'Total: {total}')
 print(f'Average Change: {average}')
 print(f'Greatest Increase in Profits: {max_increase} ({increase})')
 print(f'Greatest Decrease in Profits: {max_decrease} ({decrease})')
+
+# create path for writing to a csv
+
+output_path = os.path.join("Analysis", "analysis.csv")
+
+# open the csv file
+with open(output_path, 'w') as csvfile:
+
+    csvwriter = csv.writer(csvfile) 
+    csvwriter.writerow(["Financial Analysis"]) 
+    csvwriter.writerow(["-------------------------"])
+    csvwriter.writerow([f'Total Months: {month}'])
+    csvwriter.writerow([f'Total: {total}'])
+    csvwriter.writerow([f'Average Change: {average}'])
+    csvwriter.writerow([f'Greatest Increase in Profits: {max_increase} ({increase})'])
+    csvwriter.writerow([f'Greatest Decrease in Profits: {max_decrease} ({decrease})'])
 
