@@ -70,7 +70,7 @@ print (f"Greatest Increase in Profits: {greatest_date} (${greatest_increase})")
 print (f"Greatest Decrease in Profits: {lowest_date} (${greatest_decrease})")
 
 # create text file with results
-with open("PyBank_result.txt", "w") as file:
+with open("analysis.csv", "w") as file:
     file.write("\nFinancial Analysis")
     file.write('\n----------------------------------------')
     file.write(f"\nTotal Months: {total_months}")
