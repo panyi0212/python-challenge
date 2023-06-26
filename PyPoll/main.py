@@ -2,74 +2,67 @@
 
 import csv
 import os
-import pandas as pd
-# import numpy as np
+
 
 # import the location of the file
 filepath=os.path.join("Resources","election_data.csv")
 
-# use pandas to read the csv file
-election_data = pd.read_csv(filepath, encoding="ISO-8859-1")
+# set up variables
+total_vote = 0
+candidates = []
+number_votes = []
+percent_votes = []
 
-#Calc the total votes
-total_votes = len(election_data["Ballot ID"])
+# open and read csv file
+with open(filepath, "r") as read:
+    csv_read = csv.reader(read, delimiter= ",")
+    header = next(csv_read)
 
-# candidate lists, percentage and counts
-name = election_data["Candidate"].unique()
+    # run loop through csv
+    for row in csv_read:
 
-candidate_count = election_data["Candidate"].value_counts()
-candidate_percent = election_data["Candidate"].value_counts(normalize=True).map('{:.3%}'.format)
+        # The total number of votes cast
+        total_vote = total_vote + 1
 
-Summary = pd.DataFrame({'Percentage': candidate_percent, 'Counts': candidate_count})
-Summary.reset_index(inplace=True)
-Summary = Summary.rename(columns = {'index':'Name'})
-# print(Summary)
+        # A complete list of candidates who received votes
+        if row[2] not in candidates:
+            candidates.append(row[2])
+            index = candidates.index(row[2])
+            number_votes.append(1)
+        else: 
+            index = candidates.index(row[2])
+            number_votes[index] = number_votes[index] + 1
 
-# Charles Casper Stockham
+# The percentage of votes
+for votes in number_votes:
+    percentage = (votes/total_vote) * 100
+    percentage = round((percentage),3)
+    percent_votes.append(percentage)
 
-percentage1 = Summary.loc[(Summary["Name"]==name[0]),"Percentage"].item()
-Count1 = Summary.loc[(Summary["Name"]==name[0]),"Counts"].item()
+    # The winner of the election based on popular vote.
+    winner = max(number_votes)
+    index = number_votes.index(winner)
+    winning_candidate = candidates[index]
 
-percentage2 = Summary.loc[(Summary["Name"]==name[1]),"Percentage"].item()
-Count2 = Summary.loc[(Summary["Name"]==name[1]),"Counts"].item()
+# print in terminal
+print(f"Election Results")
+print(f"-----------------------------")
+print(f"Total Vote: {total_vote}")
+print(f"-----------------------------")
+for i in range(len(candidates)):
+    print(f"{candidates[i]}: {str(percent_votes[i])}% ({str(number_votes[i])})")
+print(f"-----------------------------")
+print(f"Winner: {winning_candidate}")
+print(f"-----------------------------")
 
-percentage3 = Summary.loc[(Summary["Name"]==name[2]),"Percentage"].item()
-Count3 = Summary.loc[(Summary["Name"]==name[2]),"Counts"].item()
-
-
-# find out the winner
-max = Summary["Counts"].max()
-winner = Summary.loc[Summary["Counts"]==max,"Name"].item()
-
-# Print result
-
-print("Election Results") 
-print("-------------------------")
-print(f'Total Votes: {total_votes}')
-print("-------------------------")
-print(f'{name[0]}: {percentage1} ({Count1})')
-print(f'{name[1]}: {percentage2} ({Count2})')
-print(f'{name[2]}: {percentage3} ({Count3})')
-print("-------------------------")
-print(f'Winner: {winner}')
-print("-------------------------")
-
-
-# create path for writing to a csv
-
-output_path = os.path.join("Analysis", "analysis.csv")
-
-# open the csv file
-with open(output_path, 'w') as csvfile:
-
-    csvwriter = csv.writer(csvfile) 
-    csvwriter.writerow(["Election Results"])
-    csvwriter.writerow(["-------------------------"])
-    csvwriter.writerow([f'Total Votes: {total_votes}'])
-    csvwriter.writerow(["-------------------------"])
-    csvwriter.writerow([f'{name[0]}: {percentage1} ({Count1})'])
-    csvwriter.writerow([f'{name[1]}: {percentage2} ({Count2})'])
-    csvwriter.writerow([f'{name[2]}: {percentage3} ({Count3})'])
-    csvwriter.writerow(["-------------------------"])
-    csvwriter.writerow([f'Winner: {winner}'])
-    csvwriter.writerow(["-------------------------"])
+# create text file with results
+with open("analysis.txt", "w") as file:
+    file.write("\nElection Results")
+    file.write(f"\n-----------------------------")
+    file.write(f"\nTotal Vote: {total_vote}")
+    file.write(f"\n-----------------------------")
+    for i in range(len(candidates)):
+        file.write(f"\n{candidates[i]}: {str(percent_votes[i])}% ({str(number_votes[i])})")
+    file.write(f"\n-----------------------------")
+    file.write(f"\nWinner: {winning_candidate}")
+    file.write(f"\n-----------------------------")
